@@ -11,7 +11,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        game: [poker, escoba-15, battleship-premium, minesweeper-pro, elemental-domain-engine]
+        game: [poker, escoba-15, battleship, minesweeper, dominio-elemental]
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-java@v4
@@ -28,7 +28,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        game: [dominio, neural-hangman]
+        game: [dominio, hangman]
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4

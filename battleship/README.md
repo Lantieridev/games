@@ -1,4 +1,4 @@
-# 🚢 Battleship Premium | Java Combat Engine
+# 🚢 Battleship | Java Combat Engine
 
 ![Java](https://img.shields.io/badge/Java-21-orange?style=for-the-badge&logo=openjdk)
 ![Maven](https://img.shields.io/badge/Maven-3.9-blue?style=for-the-badge&logo=apache-maven)
@@ -9,7 +9,7 @@
 > [!IMPORTANT]
 > **Advanced Tactical Simulation:** A premium terminal-based implementation of the classic Naval Battle, featuring sophisticated AI combat logic, ANSI-colored radar systems, and complete fleet management.
 
-Welcome to **Battleship Premium**, a technical showcase of object-oriented game architecture. This project simulates a tactical naval conflict where players compete against a strategic AI on a 10x10 grid.
+Welcome to **Battleship**, a technical showcase of object-oriented game architecture. This project simulates a tactical naval conflict where players compete against a strategic AI on a 10x10 grid.
 
 ---
 

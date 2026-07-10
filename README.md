@@ -12,11 +12,13 @@ For the flagship, larger project (Human vs. AI, full frontend/backend), see [pok
 |---|---|---|---|---|
 | [poker](poker/) | Java 21, terminal | 85 | 46% line / 33% branch | `mvn compile exec:java` |
 | [escoba-15](escoba-15/) | Java 21, terminal | 60 | 83% line / 77% branch | `mvn compile exec:java` |
-| [battleship-premium](battleship-premium/) | Java 21, terminal | 32 | 38% line / 33% branch | `mvn compile exec:java` |
-| [minesweeper-pro](minesweeper-pro/) | Java 21, terminal | — | **100% line / 99% branch** | `mvn compile exec:java` |
-| [elemental-domain-engine](elemental-domain-engine/) | Java 21, terminal | 78 | 96% line / 87% branch | `mvn compile exec:java` |
+| [battleship](battleship/) | Java 21, terminal | 32 | 38% line / 33% branch | `mvn compile exec:java` |
+| [minesweeper](minesweeper/) | Java 21, terminal | — | **100% line / 99% branch** | `mvn compile exec:java` |
+| [dominio-elemental](dominio-elemental/) | Java 21, terminal | 78 | 96% line / 87% branch | `mvn compile exec:java` |
 | [dominio](dominio/) | JS, Vite, Tailwind, browser | 141 | **100% line / 99% branch** | `npm install && npm run dev` |
-| [neural-hangman](neural-hangman/) | JS, Vitest, browser | 28 | **100% line / branch** | `npm install && npm test`, then open `index.html` |
+| [hangman](hangman/) | JS, Vitest, browser | 28 | **100% line / branch** | `npm install && npm test`, then open `index.html` |
+
+Folder names match the actual game, plainly — no `-pro`/`-premium`/`-engine` marketing suffixes. `dominio` (an 8×8 cyclic-dominance strategy game) and `dominio-elemental` (a 36-card combination game) are unrelated games that happen to share a root name in Spanish — both are named after their real academic assignment titles.
 
 ## Testing
 
@@ -28,7 +30,7 @@ mvn verify              # Java games — tests + coverage gate
 npm run test:coverage   # JS games — Vitest + coverage thresholds
 ```
 
-`poker`, `escoba-15`, and `battleship-premium` have documented, real coverage gaps below the other four (mostly `Scanner`-driven interactive loops and combinatorial logic like poker's hand evaluator) — each gate is set to that honest current floor rather than a number the build can't actually meet, and noted here rather than papered over with fake tests.
+`poker`, `escoba-15`, and `battleship` have documented, real coverage gaps below the other four (mostly `Scanner`-driven interactive loops and combinatorial logic like poker's hand evaluator) — each gate is set to that honest current floor rather than a number the build can't actually meet, and noted here rather than papered over with fake tests.
 
 CI (`.github/workflows/ci.yml`) runs every game's real gate on every push — a Java game matrix (`mvn verify`) and a JS game matrix (`npm run test:coverage`).
 

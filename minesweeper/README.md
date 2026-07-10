@@ -1,4 +1,4 @@
-# 💣 Minesweeper Pro | Java Logic Engine
+# 💣 Minesweeper | Java Logic Engine
 
 ![Java](https://img.shields.io/badge/Java-21-orange?style=for-the-badge&logo=openjdk)
 ![Maven](https://img.shields.io/badge/Maven-3.9-blue?style=for-the-badge&logo=apache-maven)
@@ -9,7 +9,7 @@
 > [!IMPORTANT]
 > **Performance Optimized:** A modern implementation of the classic Minesweeper logic, featuring an immersive terminal interface, multiple difficulty tiers, and optimized grid traversal.
 
-Welcome to **Minesweeper Pro**, a technical showcase of algorithmic recursion and clean code principles. This project reinvents the classic logic puzzle for the terminal with an executive aesthetic and robust combat logic.
+Welcome to **Minesweeper**, a technical showcase of algorithmic recursion and clean code principles. This project reinvents the classic logic puzzle for the terminal with an executive aesthetic and robust combat logic.
 
 ---
 

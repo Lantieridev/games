@@ -1,5 +1,5 @@
 {
-  "name": "hanged-man",
+  "name": "hangman",
   "version": "1.0.0",
   "description": "A premium, minimalist Hangman game for Lantieridev portfolio.",
   "main": "index.js",

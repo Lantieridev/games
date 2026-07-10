@@ -3,12 +3,12 @@
   <modelVersion>4.0.0</modelVersion>
 
   <groupId>ar.edu.utn.frc.tup.lciii</groupId>
-  <artifactId>battleship-premium</artifactId>
+  <artifactId>battleship</artifactId>
   <version>1.0.0</version>
   <packaging>jar</packaging>
 
-  <name>Battleship Premium</name>
-  <url>https://github.com/Lantieridev/battleship-premium</url>
+  <name>Battleship</name>
+  <url>https://github.com/Lantieridev/games/tree/main/battleship</url>
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
