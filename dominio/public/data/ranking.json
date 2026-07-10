@@ -1,0 +1,47 @@
+[
+  {
+    "id": "a1b2c3d4-0001",
+    "playerName": "Valeria",
+    "playerScore": 145,
+    "aiScore": 80,
+    "turns": 62,
+    "winner": "player",
+    "date": "2026-05-10T14:33:00.000Z"
+  },
+  {
+    "id": "a1b2c3d4-0002",
+    "playerName": "Nicolás",
+    "playerScore": 120,
+    "aiScore": 130,
+    "turns": 100,
+    "winner": "ai",
+    "date": "2026-05-11T20:15:00.000Z"
+  },
+  {
+    "id": "a1b2c3d4-0003",
+    "playerName": "Sofía",
+    "playerScore": 95,
+    "aiScore": 70,
+    "turns": 45,
+    "winner": "player",
+    "date": "2026-05-12T10:05:00.000Z"
+  },
+  {
+    "id": "a1b2c3d4-0004",
+    "playerName": "Mateo",
+    "playerScore": 60,
+    "aiScore": 60,
+    "turns": 100,
+    "winner": "draw",
+    "date": "2026-05-13T18:47:00.000Z"
+  },
+  {
+    "id": "a1b2c3d4-0005",
+    "playerName": "Lucía",
+    "playerScore": 185,
+    "aiScore": 40,
+    "turns": 33,
+    "winner": "player",
+    "date": "2026-05-14T09:22:00.000Z"
+  }
+]

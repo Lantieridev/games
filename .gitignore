@@ -1,0 +1,19 @@
+# Java / Maven
+*.class
+target/
+*.jar
+hs_err_pid*
+.idea/
+*.iml
+.classpath
+.project
+.settings/
+
+# Node
+node_modules/
+dist/
+coverage/
+
+# Logs / OS
+*.log
+.DS_Store

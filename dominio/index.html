@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Dominio</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              rock:  { DEFAULT: '#b45309', light: '#fef3c7' },
+              spine: { DEFAULT: '#15803d', light: '#dcfce7' },
+              mist:  { DEFAULT: '#1d4ed8', light: '#dbeafe' },
+            },
+            gridTemplateColumns: {
+              board: 'repeat(8, minmax(0, 1fr))',
+            },
+            gridTemplateRows: {
+              board: 'repeat(8, minmax(0, 1fr))',
+            },
+          },
+        },
+      };
+    </script>
+    <style type="text/tailwindcss">
+      @layer utilities {
+        .cell-selected   { @apply ring-4 ring-yellow-400 ring-inset z-10; }
+        .cell-valid-move { @apply ring-2 ring-green-400 ring-inset bg-green-50/40 cursor-pointer; }
+        .cell-valid-atk  { @apply ring-2 ring-red-400   ring-inset bg-red-50/40   cursor-pointer; }
+        .cell-shake      { animation: shake 300ms ease-in-out; }
+      }
+
+      /* Piece animations — resolved via animationend in animations.js */
+      @keyframes pieceArrival {
+        from { opacity: 0; transform: scale(0.6); }
+        to   { opacity: 1; transform: scale(1); }
+      }
+      @keyframes pieceAttack {
+        0%, 100% { transform: scale(1);    filter: brightness(1); }
+        40%      { transform: scale(1.35); filter: brightness(2) drop-shadow(0 0 6px #ef4444); }
+      }
+      @keyframes pieceMutate {
+        0%   { transform: scale(1)    rotate(0deg);   filter: brightness(1); }
+        40%  { transform: scale(0.05) rotate(180deg); filter: brightness(3) hue-rotate(180deg); }
+        100% { transform: scale(1)    rotate(360deg); filter: brightness(1); }
+      }
+      .piece-anim-move   { animation: pieceArrival 220ms ease-out     forwards; }
+      .piece-anim-attack { animation: pieceAttack  320ms ease-in-out  forwards; }
+      .piece-anim-mutate { animation: pieceMutate  420ms ease-in-out  forwards; }
+
+      @keyframes shake {
+        0%, 100% { transform: translateX(0); }
+        20%      { transform: translateX(-6px); }
+        40%      { transform: translateX(6px); }
+        60%      { transform: translateX(-4px); }
+        80%      { transform: translateX(4px); }
+      }
+    </style>
+  </head>
+  <body class="bg-slate-900 text-slate-100 min-h-screen flex flex-col">
+
+    <!-- ── SETUP SCREEN ─────────────────────────────────────────────── -->
+    <main id="setup-screen" class="flex-1 flex items-center justify-center p-4" role="main" aria-labelledby="setup-title">
+      <div class="bg-slate-800 rounded-2xl shadow-2xl p-8 w-full max-w-md space-y-6">
+        <header class="text-center space-y-2">
+          <h1 id="setup-title" class="text-4xl font-extrabold tracking-tight text-white">Dominio</h1>
+          <p class="text-slate-400 text-sm">Roca · Espina · Bruma</p>
+        </header>
+
+        <form id="setup-form" class="space-y-5" novalidate>
+          <div class="space-y-1">
+            <label for="player-name" class="block text-sm font-medium text-slate-300">Tu nombre</label>
+            <input
+              id="player-name"
+              type="text"
+              maxlength="32"
+              placeholder="Jugador"
+              autocomplete="off"
+              class="w-full rounded-lg bg-slate-700 border border-slate-600 px-4 py-2 text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-yellow-400"
+              aria-required="true"
+              aria-describedby="player-name-hint"
+            />
+            <p id="player-name-hint" class="text-xs text-slate-500">Se guardará entre sesiones.</p>
+          </div>
+
+          <div class="space-y-1">
+            <label for="board-select" class="block text-sm font-medium text-slate-300">Variante del tablero</label>
+            <select
+              id="board-select"
+              class="w-full rounded-lg bg-slate-700 border border-slate-600 px-4 py-2 text-white focus:outline-none focus:ring-2 focus:ring-yellow-400"
+              aria-label="Seleccionar variante del tablero"
+            >
+              <option value="" disabled selected>Cargando…</option>
+            </select>
+          </div>
+
+          <div class="space-y-2">
+            <p class="text-sm font-medium text-slate-300" id="difficulty-label">Dificultad de la máquina</p>
+            <div class="flex gap-3" role="radiogroup" aria-labelledby="difficulty-label">
+              <label class="flex-1 cursor-pointer">
+                <input type="radio" name="difficulty" value="easy" class="sr-only peer" checked />
+                <span class="flex flex-col items-center justify-center rounded-lg border-2 border-slate-600 peer-checked:border-yellow-400 peer-checked:bg-yellow-400/10 py-3 text-sm font-medium transition-colors" aria-label="Fácil — movimientos aleatorios">
+                  Fácil
+                  <span class="text-xs text-slate-400 mt-0.5">Aleatoria</span>
+                </span>
+              </label>
+              <label class="flex-1 cursor-pointer">
+                <input type="radio" name="difficulty" value="normal" class="sr-only peer" />
+                <span class="flex flex-col items-center justify-center rounded-lg border-2 border-slate-600 peer-checked:border-yellow-400 peer-checked:bg-yellow-400/10 py-3 text-sm font-medium transition-colors" aria-label="Normal — IA codiciosa">
+                  Normal
+                  <span class="text-xs text-slate-400 mt-0.5">Codiciosa</span>
+                </span>
+              </label>
+            </div>
+          </div>
+
+          <button
+            type="submit"
+            id="start-btn"
+            class="w-full rounded-lg bg-yellow-400 hover:bg-yellow-300 text-slate-900 font-bold py-3 text-lg transition-colors focus:outline-none focus:ring-2 focus:ring-yellow-200"
+          >
+            Comenzar partida
+          </button>
+        </form>
+
+        <footer class="text-center">
+          <button
+            id="open-ranking-btn"
+            type="button"
+            class="text-sm text-slate-400 hover:text-slate-200 underline-offset-2 hover:underline focus:outline-none focus:ring-2 focus:ring-yellow-400 rounded"
+            aria-haspopup="dialog"
+          >
+            Ver ranking
+          </button>
+        </footer>
+      </div>
+    </main>
+
+    <!-- ── GAME SCREEN ──────────────────────────────────────────────── -->
+    <div id="game-screen" hidden class="flex-1 flex flex-col min-h-screen">
+
+      <!-- Top bar -->
+      <header class="bg-slate-800 border-b border-slate-700 px-4 py-2 flex items-center justify-between">
+        <h2 class="text-lg font-bold text-white">Dominio</h2>
+        <div class="flex gap-2">
+          <button
+            id="ranking-btn-game"
+            type="button"
+            class="text-sm text-slate-400 hover:text-white px-3 py-1 rounded border border-slate-600 hover:border-slate-400 transition-colors focus:outline-none focus:ring-2 focus:ring-yellow-400"
+            aria-haspopup="dialog"
+          >
+            Ranking
+          </button>
+          <button
+            id="quit-btn"
+            type="button"
+            class="text-sm text-red-400 hover:text-red-300 px-3 py-1 rounded border border-slate-600 hover:border-red-400 transition-colors focus:outline-none focus:ring-2 focus:ring-red-400"
+          >
+            Abandonar
+          </button>
+        </div>
+      </header>
+
+      <!-- Main content -->
+      <div class="flex-1 flex flex-col lg:flex-row gap-4 p-4 items-start justify-center">
+
+        <!-- AI HUD -->
+        <aside
+          id="hud-ai"
+          class="w-full lg:w-48 bg-slate-800 rounded-xl p-4 space-y-3 lg:order-1 order-1"
+          aria-label="Estado de la máquina"
+        >
+          <h3 class="text-sm font-semibold text-slate-400 uppercase tracking-wider">Máquina</h3>
+          <div class="space-y-2">
+            <div class="flex justify-between items-center">
+              <span class="text-xs text-slate-400">Puntos</span>
+              <span id="ai-score" class="text-xl font-bold text-white" aria-live="polite" aria-label="Puntuación de la máquina">0</span>
+            </div>
+            <div class="flex justify-between items-center">
+              <span class="text-xs text-slate-400">Energía</span>
+              <div class="flex gap-0.5" id="ai-energy-bar" role="meter" aria-label="Energía de la máquina" aria-valuenow="5" aria-valuemin="0" aria-valuemax="10">
+                <!-- 10 pips rendered by JS -->
+              </div>
+            </div>
+            <div class="flex justify-between items-center">
+              <span class="text-xs text-slate-400">Piezas</span>
+              <span id="ai-pieces" class="text-sm font-semibold text-white" aria-live="polite" aria-label="Piezas restantes de la máquina">8</span>
+            </div>
+          </div>
+          <!-- Piece type breakdown -->
+          <div class="flex gap-2 text-xs" id="ai-piece-counts" aria-label="Conteo de piezas de la máquina">
+            <span class="flex items-center gap-1"><span class="w-3 h-3 rounded-full bg-amber-600 inline-block"></span><span id="ai-rock-count">3</span></span>
+            <span class="flex items-center gap-1"><span class="w-3 h-3 rounded-full bg-green-600 inline-block"></span><span id="ai-spine-count">3</span></span>
+            <span class="flex items-center gap-1"><span class="w-3 h-3 rounded-full bg-blue-600 inline-block"></span><span id="ai-mist-count">2</span></span>
+          </div>
+        </aside>
+
+        <!-- Board area -->
+        <section class="flex flex-col items-center gap-3 lg:order-2 order-2 w-full lg:w-auto">
+          <!-- Turn indicator -->
+          <div
+            id="turn-indicator"
+            class="flex items-center gap-2 bg-slate-800 rounded-full px-4 py-1.5 text-sm font-medium"
+            aria-live="assertive"
+            aria-atomic="true"
+          >
+            <span id="turn-player-label" class="text-yellow-400">Tu turno</span>
+            <span class="text-slate-500">·</span>
+            <span class="text-slate-400">Turno <span id="turn-counter">1</span> / 100</span>
+          </div>
+
+          <!-- Loading state (API fetch) -->
+          <div id="board-loading" class="text-slate-400 text-sm py-8 hidden" aria-live="polite" aria-label="Cargando tablero">
+            Cargando tablero…
+          </div>
+
+          <!-- Error state (API fetch) -->
+          <div id="board-error" class="text-red-400 text-sm py-2 hidden" role="alert" aria-live="assertive">
+            No se pudo cargar la configuración del tablero. Usando configuración predeterminada.
+          </div>
+
+          <!-- Board grid -->
+          <div
+            id="board"
+            class="grid grid-cols-board grid-rows-board aspect-square w-full max-w-[min(80vw,80vh,560px)] bg-slate-700 rounded-lg overflow-hidden border-2 border-slate-600 shadow-2xl"
+            role="grid"
+            aria-label="Tablero de Dominio 8×8"
+            aria-rowcount="8"
+            aria-colcount="8"
+            tabindex="0"
+          >
+            <!-- 64 cells generated by DOMManager.init() -->
+          </div>
+
+          <!-- Action bar (mutate / cancel) -->
+          <div id="action-bar" class="flex gap-2" role="toolbar" aria-label="Acciones disponibles">
+            <button
+              id="mutate-btn"
+              type="button"
+              hidden
+              class="px-4 py-2 rounded-lg bg-purple-600 hover:bg-purple-500 text-white text-sm font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-purple-300 disabled:opacity-40"
+              aria-describedby="mutate-cost-hint"
+            >
+              Mutar (-2 ⚡)
+            </button>
+            <button
+              id="cancel-selection-btn"
+              type="button"
+              hidden
+              class="px-4 py-2 rounded-lg bg-slate-600 hover:bg-slate-500 text-white text-sm font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-slate-300"
+            >
+              Cancelar
+            </button>
+            <span id="mutate-cost-hint" class="sr-only">Mutar cambia el tipo de la pieza al siguiente en el ciclo y cuesta 2 puntos de energía.</span>
+          </div>
+        </section>
+
+        <!-- Player HUD -->
+        <aside
+          id="hud-player"
+          class="w-full lg:w-48 bg-slate-800 rounded-xl p-4 space-y-3 lg:order-3 order-3"
+          aria-label="Tu estado"
+        >
+          <h3 class="text-sm font-semibold text-yellow-400 uppercase tracking-wider" id="player-hud-name">Vos</h3>
+          <div class="space-y-2">
+            <div class="flex justify-between items-center">
+              <span class="text-xs text-slate-400">Puntos</span>
+              <span id="player-score" class="text-xl font-bold text-white" aria-live="polite" aria-label="Tu puntuación">0</span>
+            </div>
+            <div class="flex justify-between items-center">
+              <span class="text-xs text-slate-400">Energía</span>
+              <div class="flex gap-0.5" id="player-energy-bar" role="meter" aria-label="Tu energía" aria-valuenow="5" aria-valuemin="0" aria-valuemax="10">
+                <!-- 10 pips rendered by JS -->
+              </div>
+            </div>
+            <div class="flex justify-between items-center">
+              <span class="text-xs text-slate-400">Piezas</span>
+              <span id="player-pieces" class="text-sm font-semibold text-white" aria-live="polite" aria-label="Tus piezas restantes">8</span>
+            </div>
+          </div>
+          <!-- Piece type breakdown -->
+          <div class="flex gap-2 text-xs" id="player-piece-counts" aria-label="Conteo de tus piezas">
+            <span class="flex items-center gap-1"><span class="w-3 h-3 rounded-full bg-amber-600 inline-block"></span><span id="player-rock-count">3</span></span>
+            <span class="flex items-center gap-1"><span class="w-3 h-3 rounded-full bg-green-600 inline-block"></span><span id="player-spine-count">3</span></span>
+            <span class="flex items-center gap-1"><span class="w-3 h-3 rounded-full bg-blue-600 inline-block"></span><span id="player-mist-count">2</span></span>
+          </div>
+        </aside>
+      </div>
+    </div>
+
+    <!-- ── RANKING MODAL ─────────────────────────────────────────────── -->
+    <dialog
+      id="ranking-modal"
+      class="rounded-2xl bg-slate-800 text-slate-100 p-6 w-full max-w-lg shadow-2xl backdrop:bg-black/60 open:flex open:flex-col gap-4"
+      aria-labelledby="ranking-modal-title"
+    >
+      <header class="flex items-center justify-between">
+        <h2 id="ranking-modal-title" class="text-xl font-bold text-white">Ranking</h2>
+        <button
+          id="close-ranking-btn"
+          type="button"
+          class="text-slate-400 hover:text-white rounded focus:outline-none focus:ring-2 focus:ring-yellow-400"
+          aria-label="Cerrar ranking"
+        >
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        </button>
+      </header>
+
+      <div id="ranking-loading" class="text-slate-400 text-sm text-center py-4 hidden" aria-live="polite">
+        Cargando ranking…
+      </div>
+      <div id="ranking-error" class="text-red-400 text-sm text-center py-2 hidden" role="alert">
+        No se pudo cargar el ranking.
+      </div>
+
+      <table class="w-full text-sm" aria-label="Tabla de puntuaciones" id="ranking-table">
+        <thead>
+          <tr class="text-slate-400 border-b border-slate-700">
+            <th scope="col" class="text-left pb-2 w-8">#</th>
+            <th scope="col" class="text-left pb-2">Jugador</th>
+            <th scope="col" class="text-right pb-2">Puntos</th>
+            <th scope="col" class="text-right pb-2">Turnos</th>
+            <th scope="col" class="text-right pb-2 hidden sm:table-cell">Fecha</th>
+          </tr>
+        </thead>
+        <tbody id="ranking-body" class="divide-y divide-slate-700">
+          <!-- Populated by JS -->
+        </tbody>
+      </table>
+    </dialog>
+
+    <!-- ── GAME OVER OVERLAY ─────────────────────────────────────────── -->
+    <div
+      id="gameover-overlay"
+      hidden
+      class="fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-4"
+      role="alertdialog"
+      aria-modal="true"
+      aria-labelledby="gameover-title"
+      aria-describedby="gameover-desc"
+    >
+      <div class="bg-slate-800 rounded-2xl shadow-2xl p-8 w-full max-w-sm text-center space-y-4">
+        <p id="gameover-emoji" class="text-5xl" aria-hidden="true">🏆</p>
+        <h2 id="gameover-title" class="text-2xl font-extrabold text-white">Fin de la partida</h2>
+        <p id="gameover-desc" class="text-slate-300"></p>
+        <div class="flex flex-col gap-2 text-sm text-slate-400 bg-slate-700/50 rounded-lg p-3" id="gameover-scores" aria-label="Puntuaciones finales">
+          <!-- Populated by JS -->
+        </div>
+        <div class="flex gap-3 mt-2">
+          <button
+            id="play-again-btn"
+            type="button"
+            class="flex-1 rounded-lg bg-yellow-400 hover:bg-yellow-300 text-slate-900 font-bold py-2.5 transition-colors focus:outline-none focus:ring-2 focus:ring-yellow-200"
+          >
+            Nueva partida
+          </button>
+          <button
+            id="gameover-ranking-btn"
+            type="button"
+            class="flex-1 rounded-lg bg-slate-700 hover:bg-slate-600 text-white py-2.5 text-sm transition-colors focus:outline-none focus:ring-2 focus:ring-slate-400"
+            aria-haspopup="dialog"
+          >
+            Ver ranking
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <script type="module" src="/src/main.js"></script>
+  </body>
+</html>

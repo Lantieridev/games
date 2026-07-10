@@ -1,0 +1,19 @@
+{
+  "name": "hanged-man",
+  "version": "1.0.0",
+  "description": "A premium, minimalist Hangman game for Lantieridev portfolio.",
+  "main": "index.js",
+  "scripts": {
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:coverage": "vitest run --coverage"
+  },
+  "keywords": [],
+  "author": "Lantieridev",
+  "license": "MIT",
+  "devDependencies": {
+    "@vitest/coverage-v8": "^2.1.9",
+    "jsdom": "^25.0.1",
+    "vitest": "^2.1.9"
+  }
+}

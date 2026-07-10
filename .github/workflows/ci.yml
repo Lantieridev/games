@@ -1,0 +1,42 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  java-games:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        game: [poker, escoba-15, battleship-premium, minesweeper-pro, elemental-domain-engine]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          java-version: '21'
+          distribution: temurin
+          cache: maven
+          cache-dependency-path: ${{ matrix.game }}/pom.xml
+      - name: Build, test, and enforce coverage gate
+        working-directory: ${{ matrix.game }}
+        run: mvn -B verify --file pom.xml
+
+  js-games:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        game: [dominio, neural-hangman]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+          cache-dependency-path: ${{ matrix.game }}/package-lock.json
+      - working-directory: ${{ matrix.game }}
+        run: npm ci
+      - working-directory: ${{ matrix.game }}
+        run: npm run test:coverage

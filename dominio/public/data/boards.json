@@ -1,0 +1,30 @@
+[
+  {
+    "id": "classic",
+    "name": "Clásico",
+    "description": "Ambos jugadores comienzan agrupados por tipo.",
+    "playerLayout": ["R","R","R","E","E","E","B","B"],
+    "aiLayout":     ["R","R","R","E","E","E","B","B"]
+  },
+  {
+    "id": "mirror",
+    "name": "Espejo",
+    "description": "La máquina comienza con la distribución invertida horizontalmente.",
+    "playerLayout": ["R","R","R","E","E","E","B","B"],
+    "aiLayout":     ["B","B","E","E","E","R","R","R"]
+  },
+  {
+    "id": "alternado",
+    "name": "Alternado",
+    "description": "Los tipos se distribuyen alternados a lo largo de la fila.",
+    "playerLayout": ["R","E","B","R","E","R","E","B"],
+    "aiLayout":     ["B","R","E","B","R","E","R","E"]
+  },
+  {
+    "id": "flanqueado",
+    "name": "Flanqueado",
+    "description": "Brumas en los extremos, el cuerpo central mezcla Rocas y Espinas.",
+    "playerLayout": ["B","R","R","R","E","E","E","B"],
+    "aiLayout":     ["B","E","E","E","R","R","R","B"]
+  }
+]
