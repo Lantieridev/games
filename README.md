@@ -20,6 +20,35 @@ For the flagship, larger project (Human vs. AI, full frontend/backend), see [pok
 
 Folder names match the actual game, plainly — no `-pro`/`-premium`/`-engine` marketing suffixes. `dominio` (an 8×8 cyclic-dominance strategy game) and `dominio-elemental` (a 36-card combination game) are unrelated games that happen to share a root name in Spanish — both are named after their real academic assignment titles.
 
+## Structure
+
+```mermaid
+flowchart LR
+    Root["games/ (monorepo)"]
+
+    subgraph Java["Java 21 games — own pom.xml"]
+        Poker[poker]
+        Escoba[escoba-15]
+        Battleship[battleship]
+        Mines[minesweeper]
+        Dele[dominio-elemental]
+    end
+
+    subgraph JS["JS games — own package.json"]
+        Dominio[dominio]
+        Hangman[hangman]
+    end
+
+    Root --> Java
+    Root --> JS
+
+    CI["ci.yml\nJava matrix: mvn verify\nJS matrix: npm run test:coverage"]
+    Java --> CI
+    JS --> CI
+```
+
+Cada juego es independiente — sin dependencias cruzadas entre carpetas, solo comparten el CI root que corre el gate real de cada uno.
+
 ## Testing
 
 Every game has its own test suite, its own coverage bar, and a JaCoCo/Vitest gate that fails the build on a regression — run them from inside each subfolder:
