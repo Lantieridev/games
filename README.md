@@ -4,7 +4,7 @@
 
 A monorepo of small, self-contained games from the [Lantieridev](https://github.com/Lantieridev) portfolio — 5 in Java (terminal, POO-heavy) and 2 in vanilla JS (browser). Each one is independent: its own `pom.xml`/`package.json`, its own test suite, its own README with full rules and architecture notes.
 
-For the flagship, larger project (Human vs. AI, full frontend/backend), see [pokemon-tcg-tpi](https://github.com/Lantieridev/pokemon-tcg-tpi) — it stays in its own repo.
+For the flagship, larger project (Human vs. AI, full frontend/backend), see [pokemon-tcg](https://github.com/Lantieridev/pokemon-tcg) — it stays in its own repo.
 
 ## Index
 
