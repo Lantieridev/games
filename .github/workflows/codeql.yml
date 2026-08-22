@@ -23,7 +23,7 @@ jobs:
       matrix:
         include:
           - language: java-kotlin
-            build-mode: autobuild
+            build-mode: manual
           - language: javascript-typescript
             build-mode: none
 
@@ -44,9 +44,15 @@ jobs:
           languages: ${{ matrix.language }}
           build-mode: ${{ matrix.build-mode }}
 
-      - if: matrix.build-mode == 'autobuild'
-        name: Autobuild
-        uses: github/codeql-action/autobuild@v3
+      - if: matrix.language == 'java-kotlin'
+        name: Build all Java modules
+        # Autobuild can't detect a single build command in this monorepo (5 independent
+        # pom.xml modules, no root pom.xml) — build each module explicitly instead. CodeQL
+        # traces this step automatically since build-mode is "manual".
+        run: |
+          for dir in poker escoba-15 battleship minesweeper dominio-elemental; do
+            mvn -B -f "$dir/pom.xml" compile
+          done
 
       - name: Perform CodeQL Analysis
         uses: github/codeql-action/analyze@v3
