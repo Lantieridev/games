@@ -13,7 +13,7 @@ For the flagship, larger project (Human vs. AI, full frontend/backend), see [pok
 | [poker](poker/) | Java 21, terminal | 85 | 46% line / 33% branch | `mvn compile exec:java` |
 | [escoba-15](escoba-15/) | Java 21, terminal | 60 | 83% line / 77% branch | `mvn compile exec:java` |
 | [battleship](battleship/) | Java 21, terminal | 32 | 38% line / 33% branch | `mvn compile exec:java` |
-| [minesweeper](minesweeper/) | Java 21, terminal | — | **100% line / 99% branch** | `mvn compile exec:java` |
+| [minesweeper](minesweeper/) | Java 21, terminal | 24 | **100% line / 99% branch** | `mvn compile exec:java` |
 | [dominio-elemental](dominio-elemental/) | Java 21, terminal | 78 | 96% line / 87% branch | `mvn compile exec:java` |
 | [dominio](dominio/) | JS, Vite, Tailwind, browser | 141 | **100% line / 99% branch** | `npm install && npm run dev` |
 | [hangman](hangman/) | JS, Vitest, browser | 28 | **100% line / branch** | `npm install && npm test`, then open `index.html` |
